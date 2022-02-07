@@ -16,4 +16,14 @@ export class SkillsComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  range = function (
+    count: number,
+    start_with: number = 0
+  ): string[] {
+    var numbers = [...Array(count).keys()].map((key) => key + start_with)
+    return numbers.map(function(level) {return level.toString();});
+  };
 }
+
+
+

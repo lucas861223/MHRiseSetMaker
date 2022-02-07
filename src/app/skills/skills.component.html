@@ -1,7 +1,12 @@
 <p>skills works!</p>
 <h2>My Skills</h2>
 <ul class="skillList">
-  <li *ngFor="let skill of skillList">
-    <span class="badge">test</span> {{skill.maxLevel}}{{skill.name}}
-  </li>
+  <div fxLayout="row wrap" fxLayoutGap="32px" fxLayoutAlign="flex-start" layout-wrap="">
+    <ng-container *ngFor="let skill of skillList">
+      <select [(ngModel)]="skill.desiredLevel">
+        <option value="0">{{skill.name}}</option>
+        <option *ngFor="let level of range(skill.maxLevel, 1)" value={{level}}>{{skill.name + " " + level}}</option>
+      </select>
+    </ng-container>
+  </div>
 </ul>
