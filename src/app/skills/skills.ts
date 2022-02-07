@@ -4,4 +4,5 @@ export interface Skills {
     decoLevel: number;
     description?: string;
     levelDescriptions?: string[];
+    desiredLevel: number;
 }
