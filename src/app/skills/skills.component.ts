@@ -4,13 +4,15 @@ import { SKILLLIST } from '../skills/SkillList'
 @Component({
   selector: 'app-skills',
   templateUrl: './skills.component.html',
-  styleUrls: ['./skills.component.css']
+  styleUrls: ['./skills.component.scss']
 })
 
 
 export class SkillsComponent implements OnInit {
 
   skillList = SKILLLIST;
+  regularDistribution = 100 / 5;
+
   constructor() { }
 
   ngOnInit(): void {
@@ -19,9 +21,8 @@ export class SkillsComponent implements OnInit {
   range = function (
     count: number,
     start_with: number = 0
-  ): string[] {
-    var numbers = [...Array(count).keys()].map((key) => key + start_with)
-    return numbers.map(function(level) {return level.toString();});
+  ): number[] {
+    return [...Array(count).keys()].map((key) => key + start_with)
   };
 }
 
