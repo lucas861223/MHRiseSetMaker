@@ -1,12 +1,15 @@
-<h2>Talisman</h2>
 <ul class="outerlayer">
-    <div class="test">
+    <h2>Talisman</h2>
+    <div class="innerlayer">
         <div class="flexbox" fxLayout="row" fxLayoutAlign="space-evenly center">
-            <ng-select fxFlex="31" placeholder="Skill 1" [(ngModel)]="newSkill1" [items]="skillList" bindLabel="name" autofocus bindValue="name">
+            <ng-select fxFlex="31" placeholder="Skill 1" [(ngModel)]="newSkill1" [items]="skillList" bindLabel="name"
+                autofocus bindValue="name">
             </ng-select>
-            <ng-select fxFlex="31" placeholder="Skill 2" [(ngModel)]="newSkill2" [items]="skillList" bindLabel="name" autofocus bindValue="name">
+            <ng-select fxFlex="31" placeholder="Skill 2" [(ngModel)]="newSkill2" [items]="skillList" bindLabel="name"
+                autofocus bindValue="name">
             </ng-select>
-            <ng-select fxFlex="31" placeholder="Deco Slots" [(ngModel)]="newSkill2" [items]="skillList" bindLabel="name" autofocus bindValue="name">
+            <ng-select fxFlex="31" placeholder="Deco Slots" [(ngModel)]="newSkill2" [items]="skillList" bindLabel="name"
+                autofocus bindValue="name">
             </ng-select>
         </div>
         <textarea placeholder="Paste talisman list." [(ngModel)]="talismanText"
