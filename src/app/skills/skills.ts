@@ -19,6 +19,5 @@ export class Skills {
         this.name = name;
         this.maxLevel = maxLevel;
         this.decoLevel = decoLevel;
-
     }
 }

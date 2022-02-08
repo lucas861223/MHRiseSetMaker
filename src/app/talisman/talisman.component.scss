@@ -1,0 +1,34 @@
+.test {
+    background-color: lightgray;
+    padding-left: 2%;
+    padding-right: 1%;
+}
+
+.outerlayer {
+    margin-right: 10%;
+    position: relative;
+}
+
+textarea {
+    max-width: 98vw;
+    min-width: 98%;
+    height: 5em;
+    word-wrap: break-word;
+    word-break: break-all;
+}
+
+@import "~@ng-select/ng-select/themes/material.theme.css";
+
+.flexbox {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.ng-dropdown-panel {
+    background-color: darkgray !important;
+}
+
+label {
+    text-align: left;
+}
