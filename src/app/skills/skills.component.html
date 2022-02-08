@@ -2,9 +2,12 @@
   <h2>Desired Skills</h2>
   <div class="innerlayer" fxLayout="row wrap">
     <div fxFlex.gt-xs="50%" [fxFlex.gt-md]="regularDistribution" *ngFor="let skill of skillList">
-      <mat-form-field>
-        <mat-select [(value)]="skill.desiredLevel" appearance="fill">
-          <mat-option value="0">{{skill.name}}</mat-option>
+      <mat-form-field [ngClass]="{ 
+          'selectedSkill': skill.desiredLevel > 0,
+          'noneSelectedSkill': skill.desiredLevel == 0 }">
+        <mat-select [(value)]="skill.desiredLevel" appearance="fill"
+          (selectionChange)=" onValueChanged([skill.id, skill.desiredLevel])">
+          <mat-option [value]=0>{{skill.name}}</mat-option>
           <mat-option *ngFor="let level of range(skill.maxLevel, 1)" [value]="level">{{skill.name + " " + level}}
           </mat-option>
         </mat-select>

@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { SKILLLIST } from '../skills/SkillList'
+import { SKILL_LIST } from '../SkillList'
+import { SkillSetSharingService } from '../SkillSetSharingService';
+import { MatSelectChange } from '@angular/material/select';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-skills',
@@ -10,12 +13,25 @@ import { SKILLLIST } from '../skills/SkillList'
 
 export class SkillsComponent implements OnInit {
 
-  skillList = SKILLLIST;
+  skillList = SKILL_LIST;
   regularDistribution = 100 / 5;
+  selectedSkills = new Map<number, number>();
+  subject: Subject<number[]>;
 
-  constructor() { }
+  constructor(private sharingService: SkillSetSharingService) { 
+    this.subject = sharingService.getObservable()
+  }
 
   ngOnInit(): void {
+  }
+
+  onValueChanged(value: number[]) {
+    if (value[1] > 0) {
+      this.selectedSkills.set(value[0], value[1])
+    } else if (this.selectedSkills.has(value[0])) {
+      this.selectedSkills.delete(value[0])
+    }
+    this.subject.next(value);
   }
 
   range = function (

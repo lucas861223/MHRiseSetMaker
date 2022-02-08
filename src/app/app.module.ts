@@ -5,6 +5,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { SkillsComponent } from './skills/skills.component';
+import { SkillSetSharingService } from './SkillSetSharingService';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatSelectModule } from '@angular/material/select';
@@ -33,7 +34,7 @@ import { NgSelectModule } from '@ng-select/ng-select'
     MatTabsModule,
     NgSelectModule
   ],
-  providers: [],
+  providers: [SkillSetSharingService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

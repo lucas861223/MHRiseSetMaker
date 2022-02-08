@@ -10,10 +10,17 @@
 }
 
 mat-form-field {
-  background-color: gray;
   padding-left: 5%;
   padding-right: 5%;
   align-items: center;
+}
+
+.selectedSkill {
+  background-color: rgb(65, 64, 64);
+}
+
+.noneSelectedSkill {
+  background-color: darkgray;
 }
 
 .outerlayer {
