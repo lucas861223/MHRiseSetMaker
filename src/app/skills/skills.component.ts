@@ -18,7 +18,7 @@ export class SkillsComponent implements OnInit {
   selectedSkills = new Map<number, number>();
   subject: Subject<number[]>;
 
-  constructor(private sharingService: SkillSetSharingService) { 
+  constructor(sharingService: SkillSetSharingService) { 
     this.subject = sharingService.getObservable()
   }
 
