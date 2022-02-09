@@ -11,9 +11,13 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { TalismanComponent } from './talisman/talisman.component'
-import { MatTabsModule } from '@angular/material/tabs'
-import { NgSelectModule } from '@ng-select/ng-select'
+import { TalismanComponent } from './talisman/talisman.component';
+import { MatTabsModule } from '@angular/material/tabs';
+import { NgSelectModule } from '@ng-select/ng-select';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDividerModule } from '@angular/material/divider';
 
 @NgModule({
   declarations: [
@@ -32,7 +36,11 @@ import { NgSelectModule } from '@ng-select/ng-select'
     MatFormFieldModule,
     MatToolbarModule,
     MatTabsModule,
-    NgSelectModule
+    NgSelectModule,
+    MatChipsModule,
+    MatIconModule,
+    MatButtonModule,
+    MatDividerModule
   ],
   providers: [SkillSetSharingService],
   bootstrap: [AppComponent]

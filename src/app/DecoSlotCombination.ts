@@ -1,4 +1,21 @@
-export const DECO_SLOT_COMBINATION = ["0-0-0", 
-                                  "1-0-0", "1-1-0", "1-1-1", 
-                                  "2-0-0", "2-1-0", "2-1-1", "2-2-0", "2-2-1", "2-2-2", 
-                                  "3-0-0", "3-1-0", "3-1-1", "3-2-0", "3-2-1", "3-2-2", "3-3-0", "3-3-1", "3-3-2", "3-3-3"];
+export class DecoSlotCombination {
+    id: number;
+    slot1: number = 0;
+    slot2: number = 0;
+    slot3: number = 0;
+    label: string;
+
+    constructor(id: number, slot1?: number, slot2?: number, slot3?: number) {
+        if (typeof slot1 !== 'undefined') {
+            this.slot1 = slot1;
+        }
+        if (typeof slot2 !== 'undefined') {
+            this.slot2 = slot2;
+        }
+        if (typeof slot3 !== 'undefined') {
+            this.slot3 = slot3;
+        }
+        this.id = id;
+        this.label = this.slot1 + "-" + this.slot2 + "-" + this.slot3;
+    }
+}

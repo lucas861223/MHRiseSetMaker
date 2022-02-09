@@ -1,33 +1,54 @@
 <ul class="outerlayer">
     <h2>Talisman</h2>
     <div class="innerlayer">
-        <div class="flexbox" fxLayout="row" fxLayoutAlign="space-evenly center">
-            <div class="flexbox" fxLayout="row" fxFlex="31">
+        <div class="flexbox" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="15px">
+            <div class="flexbox" fxLayout="row" fxFlex="30">
                 <ng-select fxFlex="85" placeholder="Relevent Skill" autofocus [(ngModel)]="relevantSkill"
                     (change)="updateLevelRange()" (clear)="resetSelection()">
-                    <ng-option *ngFor="let pair of releventSkills | keyvalue" [value]="pair.value">{{pair.value.name}}
+                    <ng-option *ngFor="let pair of relevantSkills | keyvalue" [value]="pair.value">{{pair.value.name}}
                     </ng-option>
                 </ng-select>
-                <ng-select fxFlex="15" placeholder="Level" autofocus [(ngModel)]="relevantSkillLevel" [clearable]="false">
+                <ng-select fxFlex="15" placeholder="Level" autofocus [(ngModel)]="relevantSkillLevel"
+                    [clearable]="false">
                     <ng-option *ngFor="let level of relevantSkillMaxLevelRange" [value]="level">{{level}}</ng-option>
                 </ng-select>
             </div>
-            <div class="flexbox" fxLayout="row" fxFlex="31">
+            <div class="flexbox" fxLayout="row" fxFlex="30">
                 <ng-select fxFlex="85" placeholder="Other Skill" [(ngModel)]="otherSkill" [items]="skillList"
-                    bindLabel="name" autofocus 
-                    (change)="updateOtherLevelRange()" (clear)="resetOtherSelection()">>
+                    bindLabel="name" autofocus (change)="updateOtherLevelRange()" (clear)="resetOtherSelection()">>
                 </ng-select>
                 <ng-select fxFlex="15" placeholder="Level" autofocus [(ngModel)]="otherSkillLevel" [clearable]="false">
                     <ng-option *ngFor="let level of otherSkillMaxLevelRange" [value]="level">{{level}}</ng-option>
                 </ng-select>
             </div>
-            <ng-select fxFlex="31" placeholder="Deco Slots" [(ngModel)]="newSlots" [items]="decoSlotCombination"
-                bindLabel="name" autofocus bindValue="name">
+            <ng-select fxFlex="30" placeholder="Deco Slots" [(ngModel)]="newSlots" [items]="decoSlotCombination"
+                bindLabel="label" autofocus bindValue="id">
             </ng-select>
+            <button mat-mini-fab color="accent" (click)="addTalisman()">
+                <mat-icon>add</mat-icon>
+            </button>
         </div>
-        <textarea placeholder="Paste talisman list." [(ngModel)]="talismanText"
-            (ngModelChange)="newTalistmanList()"> </textarea>
-        <textarea placeholder="Paste talisman list." [(ngModel)]="talismanText"
+        <div class="talisman-list">
+            <Label>Talisman With Relevent Skill</Label>
+            <mat-chip-list>
+                <mat-chip color="primary" [selectable]="false" [removable]="true"
+                    *ngFor="let talisman of relevantTalisman">
+                    {{talisman.label}}
+                    <mat-icon matChipRemove> cancel </mat-icon>
+                </mat-chip>
+            </mat-chip-list>
+        </div>
+        <div class="talisman-list">
+            <Label>Other Talisman</Label>
+            <mat-chip-list>
+                <mat-chip color="primary" [selectable]="false" [removable]="true"
+                    *ngFor="let talisman of otherTalisman">
+                    {{talisman.label}}
+                    <mat-icon matChipRemove> cancel </mat-icon>
+                </mat-chip>
+            </mat-chip-list>
+        </div>
+        <textarea placeholder="Paste talisman list." [(ngModel)]="talismanText" (keydown)="textareaKeydown($event)"
             (ngModelChange)="newTalistmanList()"> </textarea>
     </div>
 </ul>
