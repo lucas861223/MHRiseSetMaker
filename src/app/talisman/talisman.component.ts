@@ -25,10 +25,10 @@ export class TalismanComponent implements OnInit {
   relevantSkillMaxLevelRange: number[] = [];
   otherSkillMaxLevelRange: number[] = [];
   relevantSkills = new Map<number, Skill>();
-  talismanList= new Map<number, Talisman>();
-  relevantTalisman= new Map<number, Talisman>();
-  otherTalisman= new Map<number, Talisman>();
-  
+  talismanList = new Map<number, Talisman>();
+  relevantTalisman = new Map<number, Talisman>();
+  otherTalisman = new Map<number, Talisman>();
+
 
   constructor(sharingService: SkillSetSharingService) {
     sharingService.getObservable().subscribe(value => {
@@ -44,6 +44,74 @@ export class TalismanComponent implements OnInit {
     })
   }
 
+  removeFromRelevant(key: number) {
+    this.talismanList.delete(key);
+    this.relevantTalisman.delete(key);
+  }
+
+  removeFromOther(key: number) {
+    this.talismanList.delete(key);
+    this.otherTalisman.delete(key);
+  }
+
+  getSpecifyLevel(talisman: Talisman) {
+    let similarity = 0;
+    if (talisman.skill1ID == this.relevantSkill?.id) {
+      similarity += 1;
+      if (talisman.skill1Level == this.relevantSkillLevel) {
+        similarity += 1;
+      }
+    } else if (talisman.skill2ID == this.relevantSkill?.id) {
+      similarity += 1;
+      if (talisman.skill2Level == this.relevantSkillLevel) {
+        similarity += 1;
+      }
+    }
+    if (talisman.skill1ID == this.otherSkill?.id) {
+      similarity += 1;
+      if (talisman.skill1Level == this.otherSkillLevel) {
+        similarity += 1;
+      }
+    } else if (talisman.skill2ID == this.otherSkill?.id) {
+      similarity += 1;
+      if (talisman.skill2Level == this.otherSkillLevel) {
+        similarity += 1;
+      }
+    }
+    if (talisman.DecoSlotID == this.newSlots) {
+      similarity += 1;
+    }
+
+    if (similarity == 0) {
+      return "darkgray";
+    } else if (similarity == 1) {
+      return "rgb(115, 185, 238)";
+    } else if (similarity == 2) {
+      return "rgb(84, 148, 218)";
+    } else if (similarity == 3) {
+      return "rgb(51, 115, 196)";
+    } else if (similarity == 4) {
+      return "rgb(23, 80, 172)";
+    } else {
+      return "rgb(0, 3, 152)";
+    }
+  }
+
+  exportTalismanAsText() {
+    this.talismanText = "";
+    this.talismanList.forEach((talisman) => {
+      let text = ",[" + talisman.DecoSlotID;
+      if (talisman.skill1ID > 0) {
+        text += "," + talisman.skill1ID + "," + talisman.skill1Level;
+      }
+      if (talisman.skill2ID > 0) {
+        text += "," + talisman.skill2ID + "," + talisman.skill2Level;
+      }
+      this.talismanText += text + "]";
+    });
+    this.talismanText = this.talismanText.substring(1);
+  }
+  
   ngOnInit(): void {
   }
 
@@ -95,7 +163,7 @@ export class TalismanComponent implements OnInit {
     this.talismanList.clear();
     if (this.talismanText !== '') {
       let talismanTextTemp = "";
-      JSON.parse('[' + this.replaceAll(this.replaceAll(this.talismanText," ", ""), "][", "],[") + ']').forEach((talisman: number[]) => {
+      JSON.parse('[' + this.replaceAll(this.replaceAll(this.talismanText, " ", ""), "][", "],[") + ']').forEach((talisman: number[]) => {
         let talismanTmp = new Talisman(talisman[0]);
         let text = "[" + talismanTmp.DecoSlotID;
         if (talisman.length > 2) {
@@ -127,24 +195,17 @@ export class TalismanComponent implements OnInit {
   addTalisman() {
     let talisman = new Talisman(this.newSlots);
     let isRelevant = false;
-    let text = "[" + this.newSlots;
     if (this.relevantSkill != undefined) {
       talisman.setSkill1(this.relevantSkill.id, this.relevantSkillLevel);
       isRelevant = this.relevantSkills.has(this.relevantSkill.id);
-      text += "," + this.relevantSkill.id + "," + this.relevantSkillLevel;
     }
     if (this.otherSkill != undefined) {
       talisman.setSkill2(this.otherSkill.id, this.otherSkillLevel);
-      text += "," + this.otherSkill.id + "," + this.otherSkillLevel;
       if (!isRelevant) {
         isRelevant = this.relevantSkills.has(this.otherSkill.id);
       }
     }
     if (!this.talismanList.has(talisman.identifier)) {
-      if (this.talismanList.size > 0) {
-        this.talismanText += ",";
-      }
-      this.talismanText += text + "]";
       this.talismanList.set(talisman.identifier, talisman);
       if (isRelevant) {
         this.relevantTalisman.set(talisman.identifier, talisman);
@@ -152,6 +213,5 @@ export class TalismanComponent implements OnInit {
         this.otherTalisman.set(talisman.identifier, talisman);
       }
     }
-    console.log(this.talismanList);
   }
 }

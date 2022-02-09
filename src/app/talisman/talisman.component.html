@@ -1,6 +1,13 @@
 <ul class="outerlayer">
     <h2>Talisman</h2>
     <div class="innerlayer">
+        <label>Only the talismans added here are considered when making a set.<br></label>
+        <label>You can add a talisman with only the deco slots specified if you wish to use talisman with any
+            skills.<br></label>
+        <label [hidden]="relevantSkills.size == 0">You can also select the useful ones by searching with the in-game search function, with these skills
+            toggled:<br></label>
+        <label class="relevantSkillList" *ngFor="let skill of relevantSkills | keyvalue; let i = index">{{i > 0 ? ", " +
+            skill.value.name : skill.value.name}}</label>
         <div class="flexbox" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="15px">
             <div class="flexbox" fxLayout="row" fxFlex="30">
                 <ng-select fxFlex="85" placeholder="Skill 1" [(ngModel)]="relevantSkill" [items]="skillList"
@@ -19,8 +26,8 @@
                     <ng-option *ngFor="let level of otherSkillMaxLevelRange" [value]="level">{{level}}</ng-option>
                 </ng-select>
             </div>
-            <ng-select fxFlex="30" placeholder="Deco Slots" [(ngModel)]="newSlots" [items]="decoSlotCombination"
-                bindLabel="label" autofocus bindValue="id">
+            <ng-select fxFlex="30" placeholder="Deco Slots" [clearable]="false" [(ngModel)]="newSlots"
+                [items]="decoSlotCombination" bindLabel="label" autofocus bindValue="id">
             </ng-select>
             <button mat-mini-fab color="accent" (click)="addTalisman()">
                 <mat-icon>add</mat-icon>
@@ -29,8 +36,9 @@
         <div class="talisman-list">
             <Label>Talisman With Relevent Skill</Label>
             <mat-chip-list>
-                <mat-chip color="primary" [selectable]="false" [removable]="true"
-                    *ngFor="let talisman of relevantTalisman | keyvalue">
+                <mat-chip [selectable]="false" [removable]="true" *ngFor="let talisman of relevantTalisman | keyvalue"
+                    (removed)="removeFromRelevant(talisman.key)"
+                    [ngStyle]="{'background-color':getSpecifyLevel(talisman.value)}">
                     {{talisman.value.label}}
                     <mat-icon matChipRemove> cancel </mat-icon>
                 </mat-chip>
@@ -39,13 +47,15 @@
         <div class="talisman-list">
             <Label>Other Talisman</Label>
             <mat-chip-list>
-                <mat-chip color="primary" [selectable]="false" [removable]="true"
-                    *ngFor="let talisman of otherTalisman | keyvalue">
+                <mat-chip [ngStyle]="{'background-color':getSpecifyLevel(talisman.value)}" [selectable]="false"
+                    [removable]="true" *ngFor="let talisman of otherTalisman | keyvalue"
+                    (removed)="removeFromOther(talisman.key)">
                     {{talisman.value.label}}
                     <mat-icon matChipRemove> cancel </mat-icon>
                 </mat-chip>
             </mat-chip-list>
         </div>
+        <button mat-raised-button (click)="exportTalismanAsText()">export list</button>
         <textarea placeholder="Paste talisman list." [(ngModel)]="talismanText" (keydown)="textareaKeydown($event)"
             (ngModelChange)="newTalistmanList()"> </textarea>
     </div>

@@ -31,8 +31,13 @@ textarea {
 
 label {
     text-align: left;
+    white-space: pre-wrap;
 }
 
 .talisman-list {
     margin-bottom: 3em;
+}
+
+.relevantSkillList {
+    font-weight: bold;
 }
