@@ -3,10 +3,8 @@
     <div class="innerlayer">
         <div class="flexbox" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="15px">
             <div class="flexbox" fxLayout="row" fxFlex="30">
-                <ng-select fxFlex="85" placeholder="Relevent Skill" autofocus [(ngModel)]="relevantSkill"
-                    (change)="updateLevelRange()" (clear)="resetSelection()">
-                    <ng-option *ngFor="let pair of relevantSkills | keyvalue" [value]="pair.value">{{pair.value.name}}
-                    </ng-option>
+                <ng-select fxFlex="85" placeholder="Skill 1" [(ngModel)]="relevantSkill" [items]="skillList"
+                    bindLabel="name" autofocus (change)="updateLevelRange()" (clear)="resetSelection()">
                 </ng-select>
                 <ng-select fxFlex="15" placeholder="Level" autofocus [(ngModel)]="relevantSkillLevel"
                     [clearable]="false">
@@ -14,7 +12,7 @@
                 </ng-select>
             </div>
             <div class="flexbox" fxLayout="row" fxFlex="30">
-                <ng-select fxFlex="85" placeholder="Other Skill" [(ngModel)]="otherSkill" [items]="skillList"
+                <ng-select fxFlex="85" placeholder="Skill 2" [(ngModel)]="otherSkill" [items]="skillList"
                     bindLabel="name" autofocus (change)="updateOtherLevelRange()" (clear)="resetOtherSelection()">>
                 </ng-select>
                 <ng-select fxFlex="15" placeholder="Level" autofocus [(ngModel)]="otherSkillLevel" [clearable]="false">
@@ -32,8 +30,8 @@
             <Label>Talisman With Relevent Skill</Label>
             <mat-chip-list>
                 <mat-chip color="primary" [selectable]="false" [removable]="true"
-                    *ngFor="let talisman of relevantTalisman">
-                    {{talisman.label}}
+                    *ngFor="let talisman of relevantTalisman | keyvalue">
+                    {{talisman.value.label}}
                     <mat-icon matChipRemove> cancel </mat-icon>
                 </mat-chip>
             </mat-chip-list>
@@ -42,8 +40,8 @@
             <Label>Other Talisman</Label>
             <mat-chip-list>
                 <mat-chip color="primary" [selectable]="false" [removable]="true"
-                    *ngFor="let talisman of otherTalisman">
-                    {{talisman.label}}
+                    *ngFor="let talisman of otherTalisman | keyvalue">
+                    {{talisman.value.label}}
                     <mat-icon matChipRemove> cancel </mat-icon>
                 </mat-chip>
             </mat-chip-list>

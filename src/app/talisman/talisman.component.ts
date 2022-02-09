@@ -25,9 +25,10 @@ export class TalismanComponent implements OnInit {
   relevantSkillMaxLevelRange: number[] = [];
   otherSkillMaxLevelRange: number[] = [];
   relevantSkills = new Map<number, Skill>();
-  talismanList: Talisman[] = [];
-  relevantTalisman: Talisman[] = [];
-  otherTalisman: Talisman[] = [];
+  talismanList= new Map<number, Talisman>();
+  relevantTalisman= new Map<number, Talisman>();
+  otherTalisman= new Map<number, Talisman>();
+  
 
   constructor(sharingService: SkillSetSharingService) {
     sharingService.getObservable().subscribe(value => {
@@ -47,15 +48,15 @@ export class TalismanComponent implements OnInit {
   }
 
   reOrganizeTalismanList() {
-    this.relevantTalisman = [];
-    this.otherTalisman = [];
-    for (let talisman of this.talismanList) {
+    this.relevantTalisman.clear();
+    this.otherTalisman.clear();
+    this.talismanList.forEach((talisman) => {
       if (this.relevantSkills.has(talisman.skill1ID) || this.relevantSkills.has(talisman.skill2ID)) {
-        this.relevantTalisman.push(talisman);
+        this.relevantTalisman.set(talisman.identifier, talisman);
       } else {
-        this.otherTalisman.push(talisman);
+        this.otherTalisman.set(talisman.identifier, talisman);
       }
-    }
+    });
   }
 
   resetOtherSelection() {
@@ -86,21 +87,32 @@ export class TalismanComponent implements OnInit {
     }
   }
 
+  replaceAll(target: string, search: string, replace: string) {
+    return target.split(search).join(replace);
+  }
+
   newTalistmanList() {
-    this.talismanList = [];
-    this.talismanText = this.talismanText.replace(" ", "").replace("][", "],[")
+    this.talismanList.clear();
     if (this.talismanText !== '') {
-      console.log(JSON.parse('[' + this.talismanText + ']'));
-      JSON.parse('[' + this.talismanText + ']').forEach((talisman: number[]) => {
+      let talismanTextTemp = "";
+      JSON.parse('[' + this.replaceAll(this.replaceAll(this.talismanText," ", ""), "][", "],[") + ']').forEach((talisman: number[]) => {
         let talismanTmp = new Talisman(talisman[0]);
+        let text = "[" + talismanTmp.DecoSlotID;
         if (talisman.length > 2) {
           talismanTmp.setSkill1(talisman[1], talisman[2]);
+          text += "," + talisman[1] + "," + talisman[2];
         }
         if (talisman.length > 4) {
           talismanTmp.setSkill2(talisman[3], talisman[4]);
+          text += "," + talisman[3] + "," + talisman[4];
         }
-        this.talismanList.push(talismanTmp)
+        text += "]";
+        if (!this.talismanList.has(talismanTmp.identifier)) {
+          this.talismanList.set(talismanTmp.identifier, talismanTmp)
+          talismanTextTemp += "," + text;
+        }
       });
+      this.talismanText = talismanTextTemp.substring(1);
     }
     this.reOrganizeTalismanList();
   }
@@ -118,7 +130,7 @@ export class TalismanComponent implements OnInit {
     let text = "[" + this.newSlots;
     if (this.relevantSkill != undefined) {
       talisman.setSkill1(this.relevantSkill.id, this.relevantSkillLevel);
-      isRelevant = true;
+      isRelevant = this.relevantSkills.has(this.relevantSkill.id);
       text += "," + this.relevantSkill.id + "," + this.relevantSkillLevel;
     }
     if (this.otherSkill != undefined) {
@@ -128,15 +140,18 @@ export class TalismanComponent implements OnInit {
         isRelevant = this.relevantSkills.has(this.otherSkill.id);
       }
     }
-    if (this.talismanList.length > 0) {
-      this.talismanText += ",";
+    if (!this.talismanList.has(talisman.identifier)) {
+      if (this.talismanList.size > 0) {
+        this.talismanText += ",";
+      }
+      this.talismanText += text + "]";
+      this.talismanList.set(talisman.identifier, talisman);
+      if (isRelevant) {
+        this.relevantTalisman.set(talisman.identifier, talisman);
+      } else {
+        this.otherTalisman.set(talisman.identifier, talisman);
+      }
     }
-    this.talismanText += text + "]";
-    this.talismanList.push(talisman);
-    if (isRelevant) {
-      this.relevantTalisman.push(talisman);
-    } else {
-      this.otherTalisman.push(talisman);
-    }
+    console.log(this.talismanList);
   }
 }
