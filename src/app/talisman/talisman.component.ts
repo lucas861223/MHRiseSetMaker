@@ -4,6 +4,8 @@ import { Skill } from '../Skill';
 import { DECO_SLOT_COMBINATION_LIST } from '../DecoSlotCombinationList';
 import { SkillSetSharingService } from '../SkillSetSharingService';
 import { Talisman } from '../Talisman';
+import { ARMOR_LIST } from '../ArmorList';
+import { zip } from 'rxjs';
 
 
 @Component({
@@ -111,7 +113,7 @@ export class TalismanComponent implements OnInit {
     });
     this.talismanText = this.talismanText.substring(1);
   }
-  
+
   ngOnInit(): void {
   }
 

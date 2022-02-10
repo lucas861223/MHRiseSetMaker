@@ -18,12 +18,14 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
+import { SearchResultComponent } from './search-result/search-result.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     SkillsComponent,
-    TalismanComponent
+    TalismanComponent,
+    SearchResultComponent
   ],
   imports: [
     BrowserModule,
