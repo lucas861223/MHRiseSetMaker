@@ -31,7 +31,6 @@ export class TalismanComponent implements OnInit {
   relevantTalisman = new Map<number, Talisman>();
   otherTalisman = new Map<number, Talisman>();
 
-
   constructor(sharingService: SkillSetSharingService) {
     sharingService.getObservable().subscribe(value => {
       if (value[1] > 0) {

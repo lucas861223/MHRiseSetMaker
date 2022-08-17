@@ -3,6 +3,8 @@ import { SKILL_LIST } from '../SkillList'
 import { SkillSetSharingService } from '../SkillSetSharingService';
 import { MatSelectChange } from '@angular/material/select';
 import { Subject } from 'rxjs';
+import { Output, EventEmitter } from '@angular/core';
+import { Skill } from '../Skill';
 
 @Component({
   selector: 'app-skills',
@@ -15,6 +17,7 @@ export class SkillsComponent implements OnInit {
 
   skillList = SKILL_LIST;
   regularDistribution = 100 / 5;
+  @Output() selectedSkillList = new EventEmitter<string>();
   selectedSkills = new Map<number, number>();
   subject: Subject<number[]>;
 
@@ -25,13 +28,14 @@ export class SkillsComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  onValueChanged(value: number[]) {
-    if (value[1] > 0) {
-      this.selectedSkills.set(value[0], value[1])
-    } else if (this.selectedSkills.has(value[0])) {
-      this.selectedSkills.delete(value[0])
+  onValueChanged(skill: Skill) {
+    if (skill.desiredLevel > 0) {
+      this.selectedSkills.set(skill.id, skill.desiredLevel)
+    } else if (this.selectedSkills.has(skill.id)) {
+      this.selectedSkills.delete(skill.id)
     }
-    this.subject.next(value);
+    this.subject.next([skill.id, skill.desiredLevel, skill.oldLevel]);
+    skill.oldLevel = skill.desiredLevel;
   }
 
   range = function (

@@ -5,7 +5,7 @@ import { Subject } from 'rxjs';
 export class SkillSetSharingService {
     
     private observable= new Subject<number[]>();
-
+    
     getObservable() {
         return this.observable;
     }
