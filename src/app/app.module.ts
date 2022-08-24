@@ -19,6 +19,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { SearchResultComponent } from './search-result/search-result.component';
+import { TalismanSharingService } from './TalismanSharingService';
 
 @NgModule({
   declarations: [
@@ -44,7 +45,7 @@ import { SearchResultComponent } from './search-result/search-result.component';
     MatButtonModule,
     MatDividerModule
   ],
-  providers: [SkillSetSharingService],
+  providers: [SkillSetSharingService, TalismanSharingService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

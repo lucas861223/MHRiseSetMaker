@@ -1,4 +1,5 @@
 import { SKILL_LIST } from "./SkillList";
+import { Subject } from 'rxjs';
 import { DECO_SLOT_COMBINATION_LIST } from "./DecoSlotCombinationList";
 
 export class Talisman {

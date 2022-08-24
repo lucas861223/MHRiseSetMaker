@@ -5,7 +5,8 @@ import { DECO_SLOT_COMBINATION_LIST } from '../DecoSlotCombinationList';
 import { SkillSetSharingService } from '../SkillSetSharingService';
 import { Talisman } from '../Talisman';
 import { ARMOR_LIST } from '../ArmorList';
-import { zip } from 'rxjs';
+import { Subject } from 'rxjs';
+import { TalismanSharingService } from '../TalismanSharingService';
 
 
 @Component({
@@ -30,8 +31,10 @@ export class TalismanComponent implements OnInit {
   talismanList = new Map<number, Talisman>();
   relevantTalisman = new Map<number, Talisman>();
   otherTalisman = new Map<number, Talisman>();
+  subject: Subject<[number, Talisman | null]>; 
 
-  constructor(sharingService: SkillSetSharingService) {
+  constructor(sharingService: SkillSetSharingService,
+              talismanService: TalismanSharingService) {
     sharingService.getObservable().subscribe(value => {
       if (value[1] > 0) {
         this.relevantSkills.set(value[0], SKILL_LIST[value[0] - 1])
@@ -43,16 +46,19 @@ export class TalismanComponent implements OnInit {
       }
       this.reOrganizeTalismanList();
     })
+    this.subject = talismanService.getObservable();
   }
 
   removeFromRelevant(key: number) {
     this.talismanList.delete(key);
     this.relevantTalisman.delete(key);
+    this.subject.next([-key, null]);
   }
 
   removeFromOther(key: number) {
     this.talismanList.delete(key);
     this.otherTalisman.delete(key);
+    this.subject.next([-key, null]);
   }
 
   getSpecifyLevel(talisman: Talisman) {
@@ -180,6 +186,7 @@ export class TalismanComponent implements OnInit {
           this.talismanList.set(talismanTmp.identifier, talismanTmp)
           talismanTextTemp += "," + text;
         }
+        this.subject.next([talismanTmp.identifier, talismanTmp]);
       });
       this.talismanText = talismanTextTemp.substring(1);
     }
@@ -214,5 +221,6 @@ export class TalismanComponent implements OnInit {
         this.otherTalisman.set(talisman.identifier, talisman);
       }
     }
+    this.subject.next([talisman.identifier, talisman]);
   }
 }
