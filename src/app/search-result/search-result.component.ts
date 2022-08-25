@@ -70,18 +70,13 @@ export class SearchResultComponent implements OnInit {
       var grade = 0;
       for (let i = 0; i < armor.skills.length; i++) {
         if (this.relevantSkills.has(armor.skills[i])) {
-          if (SKILL_LIST[armor.skills[i] - 1].decoLevel >= 2) {
-            grade += Math.min(this.relevantSkills.get(armor.skills[i])!, armor.skillLevels[i]);
-          }
+          grade += Math.min(this.relevantSkills.get(armor.skills[i])!, armor.skillLevels[i]);
         }
       }
-      //console.log(armor.name + "done, grade " + grade);
       if (grade > 0) {
         if (result.length < grade + 1) {
-          console.log("not enough grades");
           for (let i = result.length; i <= grade; i++) {
             result.push([] as Array<number>);
-            console.log(grade + "\t" + result.length);
           }
         }
         result[grade].push(armor.id);
@@ -105,6 +100,10 @@ export class SearchResultComponent implements OnInit {
     this.talisman = [];
     this.combinations = [];
     this.foundSet = 0;
+    this.sortedArmors = [];
+    this.unmetLevel1 = 0;
+    this.unmetLevel2 = 0;
+    this.unmetLevel3 = 0;
     this.gradeArmors(this.head, 0);
     this.gradeArmors(this.chest, 1);
     this.gradeArmors(this.arms, 2);
@@ -120,18 +119,15 @@ export class SearchResultComponent implements OnInit {
     }
     this.talismanList.forEach(talisman => {
       var grade = 0;
-      if (this.relevantSkills.has(talisman.skill1ID) && SKILL_LIST[talisman.skill1ID - 1].decoLevel >= 2) {
+      if (this.relevantSkills.has(talisman.skill1ID)) {
         grade += Math.min(this.relevantSkills.get(talisman.skill1ID)!, talisman.skill1Level);
       }
-      if (this.relevantSkills.has(talisman.skill2ID) && SKILL_LIST[talisman.skill2ID - 1].decoLevel >= 2) {
+      if (this.relevantSkills.has(talisman.skill2ID)) {
         grade += Math.min(this.relevantSkills.get(talisman.skill2ID)!, talisman.skill2Level);
       }
       if (grade > 0) {
-        //console.log(talisman.identifier + " done, grade " + grade);
         if (this.talisman.length < grade + 1) {
-          //console.log("not enough grades");
           for (let i = this.talisman.length; i <= grade; i++) {
-            //console.log(grade + "\t" + this.talisman.length);
             this.talisman.push([] as Array<number>);
           }
         }
@@ -143,8 +139,7 @@ export class SearchResultComponent implements OnInit {
       }
 
     });
-    console.log("head\t" + this.head.splice(1).join("\t") + "\nchest\t" + this.chest.splice(1).join("\t") + "\narms\t" + this.arms.splice(1).join("\t") + "\nwaist\t" + this.waist.splice(1).join("\t") + "\nlegs\t" + this.legs.splice(1).join("\t") + "\ntalisman\t" + this.talisman.splice(1).join("\t"));
-
+    console.log("head\t" + this.head.join("\t") + "\nchest\t" + this.chest.join("\t") + "\narms\t" + this.arms.join("\t") + "\nwaist\t" + this.waist.join("\t") + "\nlegs\t" + this.legs.join("\t") + "\ntalisman\t" + this.talisman.join("\t"));
     console.log(this.relevantSkills);
     this.recursiveSearch(0);
   }
@@ -170,11 +165,8 @@ export class SearchResultComponent implements OnInit {
         for (let i = this.talisman.length - 1; i >= 1 && this.foundSet < this.TARGET_SET; i--) {
           for (let talismanID of this.talisman[i]) {
             let talisman = this.talismanList.get(talismanID)!;
-            console.log("tring to find: \t" + this.getArmorFromList(talismanID).name);
             this.currentCombination[5] = talismanID;
-            this.decos[0] += talisman.grade[0];
-            this.decos[1] += talisman.grade[1];
-            this.decos[2] += talisman.grade[2];
+            this.addDecoSlots(talisman.DecoSlotID, true);
             if (this.relevantSkills.has(-talisman.skill1ID)) {
               this.addToUnmetLevels(talisman.skill1ID, - Math.min(Math.max(0, this.relevantSkills.get(-talisman.skill1ID)!), talisman.skill1Level));
             }
@@ -185,15 +177,12 @@ export class SearchResultComponent implements OnInit {
             if (this.canFinish()) {
               this.combinations.push(this.currentCombination.slice());
               this.calculateFoundSet();
-              alert(this.currentCombination);
+              //this.printCombo();
             }
-            //console.log(this.relevantSkills, this.currentCombination, this.unmetCondition, this.unmetLevels)
             if (this.foundSet >= this.TARGET_SET) {
               break;
             }
-            this.decos[0] -= talisman.grade[0];
-            this.decos[1] -= talisman.grade[1];
-            this.decos[2] -= talisman.grade[2];
+            this.addDecoSlots(talisman.DecoSlotID, false);
             if (this.relevantSkills.get(-talisman.skill1ID)! > 0) {
               this.addToUnmetLevels(talisman.skill1ID, talisman.skill1Level);
             } else if (Math.abs(this.relevantSkills.get(-talisman.skill1ID)!) < talisman.skill1ID) {
@@ -207,20 +196,16 @@ export class SearchResultComponent implements OnInit {
           }
         }
         if (this.foundSet < this.TARGET_SET && this.sortedArmors[5] != undefined) {
-          for (let i = DECO_SLOT_COMBINATION_LIST.length; i > 0 && this.foundSet < this.TARGET_SET; i--) {
+          for (let i = DECO_SLOT_COMBINATION_LIST.length - 1; i >= 0 && this.foundSet < this.TARGET_SET; i--) {
             if (this.sortedArmors[5].has(i)) {
               this.currentCombination[5] = -i;
-              this.unmetLevel1 -= DECO_SLOT_COMBINATION_LIST[i - 1].slot1;
-              this.unmetLevel2 -= DECO_SLOT_COMBINATION_LIST[i - 1].slot2;
-              this.unmetLevel3 -= DECO_SLOT_COMBINATION_LIST[i - 1].slot3;
+              this.addDecoSlots(i, true);
               if (this.canFinish()) {
+                //this.printCombo();
                 this.combinations.push(this.currentCombination.slice());
                 this.calculateFoundSet();
-                alert(this.currentCombination);
               }
-              this.unmetLevel1 += DECO_SLOT_COMBINATION_LIST[i - 1].slot1;
-              this.unmetLevel2 += DECO_SLOT_COMBINATION_LIST[i - 1].slot2;
-              this.unmetLevel3 += DECO_SLOT_COMBINATION_LIST[i - 1].slot3;
+              this.addDecoSlots(i, false);
             }
           }
         }
@@ -230,60 +215,84 @@ export class SearchResultComponent implements OnInit {
 
   calculateFoundSet(): void {
     let resolvedCombination = 1;
-    console.log(this.sortedArmors);
-    console.log(this.currentCombination);
     for (let i = 0; i < this.currentCombination.length; i++) {
       if (this.currentCombination[i] <= 0 && this.currentCombination[i] != this.UNDEFINED_ARMOR) {
         resolvedCombination *= this.sortedArmors[i].get(-this.currentCombination[i])!.length;
+        let x = this.currentCombination[i];
+        for (let armorID of this.sortedArmors[i].get(-x)!) {
+          this.currentCombination[i] = armorID;
+          //this.printCombo();
+        }
       }
     }
-    console.log(resolvedCombination);
     this.foundSet += resolvedCombination;
   }
 
   recursiveSearchArmor(list: Array<Array<number>>, next: number): void {
     for (let i = list.length - 1; i >= 1; i--) {
-      for (let j = next; j < this.currentCombination.length; j++) {
-        this.currentCombination[j] = this.UNDEFINED_ARMOR;
-      }
       list[i].forEach(armorID => {
         this.currentCombination[next - 1] = armorID;
-        this.removeskills(this.getArmorFromList(armorID));
+        this.addArmor(this.getArmorFromList(armorID));
         if (this.canFinish()) {
+          //this.printCombo();
           this.combinations.push(this.currentCombination.slice());
           this.calculateFoundSet();
         }
-        console.log(this.getArmorFromList(armorID))
         if (this.foundSet < this.TARGET_SET) {
           this.recursiveSearch(next);
         }
-        this.addSkills(this.getArmorFromList(armorID));
+        this.removeArmor(this.getArmorFromList(armorID));
       });
     }
     if (this.foundSet < this.TARGET_SET) {
-      for (let i = DECO_SLOT_COMBINATION_LIST.length; i > 0 && this.foundSet < this.TARGET_SET; i--) {
+      for (let i = DECO_SLOT_COMBINATION_LIST.length - 1; i >= 0 && this.foundSet < this.TARGET_SET; i--) {
         if (this.sortedArmors[next - 1].has(i)) {
           this.currentCombination[next - 1] = -i;
-          for (let j = next; j < this.currentCombination.length; j++) {
-            this.currentCombination[j] = -200;
-          }
-          this.unmetLevel1 -= DECO_SLOT_COMBINATION_LIST[i - 1].slot1;
-          this.unmetLevel2 -= DECO_SLOT_COMBINATION_LIST[i - 1].slot2;
-          this.unmetLevel3 -= DECO_SLOT_COMBINATION_LIST[i - 1].slot3;
+          this.addDecoSlots(i, true);
           if (this.canFinish()) {
+            //this.printCombo();
             this.combinations.push(this.currentCombination.slice());
             this.calculateFoundSet();
-            alert(this.currentCombination);
           }
           if (this.foundSet < this.TARGET_SET) {
             this.recursiveSearch(next);
           }
-          this.unmetLevel1 += DECO_SLOT_COMBINATION_LIST[i - 1].slot1;
-          this.unmetLevel2 += DECO_SLOT_COMBINATION_LIST[i - 1].slot2;
-          this.unmetLevel3 += DECO_SLOT_COMBINATION_LIST[i - 1].slot3;
+          this.addDecoSlots(i, false);
         }
       }
     }
+  }
+
+  printCombo(): void {
+    let x = "";
+    this.decos = [0, 0, 0];
+    for (let i = 0; i < this.currentCombination.length; i++) {
+      if (this.currentCombination[i] > 0) {
+        x += this.getArmorFromList(this.currentCombination[i]).name + ",\t";
+        console.log(this.getArmorFromList(this.currentCombination[i]).name + "\t" + this.getArmorFromList(this.currentCombination[i]).grade);
+        this.addDecoSlots(this.getArmorFromList(this.currentCombination[i]).decoSlots, true)
+      } else if (this.currentCombination[i] != this.UNDEFINED_ARMOR) {
+        x += DECO_SLOT_COMBINATION_LIST[-this.currentCombination[i]].slots + ",\t";
+        this.addDecoSlots(-this.currentCombination[i], true)
+      } else {
+        x += "any,\t";
+      }
+    }
+    x += "\n" + this.decos + "\t[" + this.unmetLevel3 + "\, " + this.unmetLevel2 + ", " + this.unmetLevel1 + "]";
+    console.log(x);
+  }
+
+  addDecoSlots(combination: number, isAdding: boolean): void {
+    if (DECO_SLOT_COMBINATION_LIST[combination].slot1 > 0) {
+      this.decos[Math.abs(DECO_SLOT_COMBINATION_LIST[combination].slot1 - 3)] += isAdding ? 1 : -1;
+    }
+    if (DECO_SLOT_COMBINATION_LIST[combination].slot2 > 0) {
+      this.decos[Math.abs(DECO_SLOT_COMBINATION_LIST[combination].slot2 - 3)] += isAdding ? 1 : -1;
+    }
+    if (DECO_SLOT_COMBINATION_LIST[combination].slot3 > 0) {
+      this.decos[Math.abs(DECO_SLOT_COMBINATION_LIST[combination].slot3 - 3)] += isAdding ? 1 : -1;
+    }
+
   }
 
   canFinish(): boolean {
@@ -313,14 +322,11 @@ export class SearchResultComponent implements OnInit {
     }
   }
 
-  addSkills(armor: Armor): void {
-    this.decos[0] += armor.grade[0];
-    this.decos[1] += armor.grade[1];
-    this.decos[2] += armor.grade[2];
-
+  removeArmor(armor: Armor): void {
+    this.addDecoSlots(armor.decoSlots, false);
     for (let i = 0; i < armor.skills.length; i++) {
       if (this.relevantSkills.has(-armor.skills[i])) {
-        if (this.relevantSkills.get(-armor.skills[i])! > 0) {
+        if (this.relevantSkills.get(-armor.skills[i])! >= 0) {
           this.addToUnmetLevels(armor.skills[i], armor.skillLevels[i]);
         } else if (Math.abs(this.relevantSkills.get(-armor.skills[i])!) < armor.skillLevels[i]) {
           this.addToUnmetLevels(armor.skills[i], armor.skillLevels[i] + this.relevantSkills.get(-armor.skills[i])!);
@@ -330,13 +336,11 @@ export class SearchResultComponent implements OnInit {
     }
   }
 
-  removeskills(armor: Armor): void {
-    this.decos[0] -= armor.grade[0];
-    this.decos[1] -= armor.grade[1];
-    this.decos[2] -= armor.grade[2];
+  addArmor(armor: Armor): void {
+    this.addDecoSlots(armor.decoSlots, true);
     for (let i = 0; i < armor.skills.length; i++) {
       if (this.relevantSkills.has(-armor.skills[i])) {
-        this.addToUnmetLevels(armor.skills[i], - Math.min(Math.max(0, this.relevantSkills.get(-armor.skills[i])!), armor.skillLevels[i]));
+        this.addToUnmetLevels(armor.skills[i], -Math.min(Math.max(0, this.relevantSkills.get(-armor.skills[i])!), armor.skillLevels[i]));
         this.relevantSkills.set(-armor.skills[i], this.relevantSkills.get(-armor.skills[i])! - armor.skillLevels[i]);
       }
     }
