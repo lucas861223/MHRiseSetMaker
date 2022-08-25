@@ -53,9 +53,13 @@ export class SearchResultComponent implements OnInit {
   unmetLevel1 = 0;
   unmetLevel2 = 0;
   unmetLevel3 = 0;
+  foundSet: number = 0;
   decos: Array<number> = [0, 0, 0];
   combinations: Array<Array<number>> = [];
-  currentCombination: Array<number> = [-1, -1, -1, -1, -1, -1];
+  UNDEFINED_ARMOR = -200;
+  TARGET_SET = 10;
+  currentCombination: Array<number> = [this.UNDEFINED_ARMOR, this.UNDEFINED_ARMOR, this.UNDEFINED_ARMOR, this.UNDEFINED_ARMOR, this.UNDEFINED_ARMOR, this.UNDEFINED_ARMOR];
+
   ngOnInit(): void {
 
   }
@@ -100,13 +104,14 @@ export class SearchResultComponent implements OnInit {
     this.grades = [];
     this.talisman = [];
     this.combinations = [];
+    this.foundSet = 0;
     this.gradeArmors(this.head, 0);
     this.gradeArmors(this.chest, 1);
     this.gradeArmors(this.arms, 2);
     this.gradeArmors(this.waist, 3);
     this.gradeArmors(this.legs, 4);
     this.decos = [0, 0, 0];
-    this.currentCombination = [-1, -1, -1, -1, -1, -1];
+    this.currentCombination = [this.UNDEFINED_ARMOR, this.UNDEFINED_ARMOR, this.UNDEFINED_ARMOR, this.UNDEFINED_ARMOR, this.UNDEFINED_ARMOR, this.UNDEFINED_ARMOR];
     for (let key of this.relevantSkills.keys()) {
       if (key > 0) {
         this.addToUnmetLevels(key, this.relevantSkills.get(key)!);
@@ -147,7 +152,6 @@ export class SearchResultComponent implements OnInit {
   recursiveSearch(depth: number): void {
     switch (depth) {
       case 0:
-        console.log("searhching\t" + this.head.length + "\t" + this.head[1]);
         this.recursiveSearchArmor(this.head, 1);
         break;
       case 1:
@@ -163,7 +167,7 @@ export class SearchResultComponent implements OnInit {
         this.recursiveSearchArmor(this.legs, 5);
         break;
       case 5:
-        for (let i = this.talisman.length - 1; i >= 1; i--) {
+        for (let i = this.talisman.length - 1; i >= 1 && this.foundSet < this.TARGET_SET; i--) {
           for (let talismanID of this.talisman[i]) {
             let talisman = this.talismanList.get(talismanID)!;
             console.log("tring to find: \t" + this.getArmorFromList(talismanID).name);
@@ -180,10 +184,11 @@ export class SearchResultComponent implements OnInit {
 
             if (this.canFinish()) {
               this.combinations.push(this.currentCombination.slice());
+              this.calculateFoundSet();
               alert(this.currentCombination);
             }
             //console.log(this.relevantSkills, this.currentCombination, this.unmetCondition, this.unmetLevels)
-            if (this.combinations.length >= 10) {
+            if (this.foundSet >= this.TARGET_SET) {
               break;
             }
             this.decos[0] -= talisman.grade[0];
@@ -201,71 +206,76 @@ export class SearchResultComponent implements OnInit {
             }
           }
         }
-        console.log("time to go into other armor")
-        if (this.combinations.length < 10) {
-          for (let i = DECO_SLOT_COMBINATION_LIST.length; i > 0 && this.combinations.length < 10; i--) {
+        if (this.foundSet < this.TARGET_SET && this.sortedArmors[5] != undefined) {
+          for (let i = DECO_SLOT_COMBINATION_LIST.length; i > 0 && this.foundSet < this.TARGET_SET; i--) {
             if (this.sortedArmors[5].has(i)) {
               this.currentCombination[5] = -i;
               this.unmetLevel1 -= DECO_SLOT_COMBINATION_LIST[i - 1].slot1;
               this.unmetLevel2 -= DECO_SLOT_COMBINATION_LIST[i - 1].slot2;
               this.unmetLevel3 -= DECO_SLOT_COMBINATION_LIST[i - 1].slot3;
-              console.log("can I finish")
               if (this.canFinish()) {
                 this.combinations.push(this.currentCombination.slice());
+                this.calculateFoundSet();
                 alert(this.currentCombination);
               }
-              console.log("recur next part")
               this.unmetLevel1 += DECO_SLOT_COMBINATION_LIST[i - 1].slot1;
               this.unmetLevel2 += DECO_SLOT_COMBINATION_LIST[i - 1].slot2;
               this.unmetLevel3 += DECO_SLOT_COMBINATION_LIST[i - 1].slot3;
             }
           }
-          console.log("done one")
         }
         break;
     }
   }
 
+  calculateFoundSet(): void {
+    let resolvedCombination = 1;
+    console.log(this.sortedArmors);
+    console.log(this.currentCombination);
+    for (let i = 0; i < this.currentCombination.length; i++) {
+      if (this.currentCombination[i] <= 0 && this.currentCombination[i] != this.UNDEFINED_ARMOR) {
+        resolvedCombination *= this.sortedArmors[i].get(-this.currentCombination[i])!.length;
+      }
+    }
+    console.log(resolvedCombination);
+    this.foundSet += resolvedCombination;
+  }
+
   recursiveSearchArmor(list: Array<Array<number>>, next: number): void {
-    console.log("searhching\t" + list.length + "\t" + list[1]);
     for (let i = list.length - 1; i >= 1; i--) {
       for (let j = next; j < this.currentCombination.length; j++) {
-        this.currentCombination[j] = -1;
+        this.currentCombination[j] = this.UNDEFINED_ARMOR;
       }
       list[i].forEach(armorID => {
-        console.log("tring to find: \t" + this.getArmorFromList(armorID).name);
         this.currentCombination[next - 1] = armorID;
         this.removeskills(this.getArmorFromList(armorID));
         if (this.canFinish()) {
           this.combinations.push(this.currentCombination.slice());
-          alert(this.currentCombination);
+          this.calculateFoundSet();
         }
         console.log(this.getArmorFromList(armorID))
-        //console.log(this.relevantSkills, this.currentCombination, this.unmetCondition, this.unmetLevels)
-        if (this.combinations.length < 10) {
+        if (this.foundSet < this.TARGET_SET) {
           this.recursiveSearch(next);
         }
         this.addSkills(this.getArmorFromList(armorID));
       });
     }
-    console.log("time to go into other armor")
-    if (this.combinations.length < 10) {
-      for (let i = DECO_SLOT_COMBINATION_LIST.length; i > 0 && this.combinations.length < 10; i--) {
+    if (this.foundSet < this.TARGET_SET) {
+      for (let i = DECO_SLOT_COMBINATION_LIST.length; i > 0 && this.foundSet < this.TARGET_SET; i--) {
         if (this.sortedArmors[next - 1].has(i)) {
           this.currentCombination[next - 1] = -i;
           for (let j = next; j < this.currentCombination.length; j++) {
-            this.currentCombination[j] = -1;
+            this.currentCombination[j] = -200;
           }
           this.unmetLevel1 -= DECO_SLOT_COMBINATION_LIST[i - 1].slot1;
           this.unmetLevel2 -= DECO_SLOT_COMBINATION_LIST[i - 1].slot2;
           this.unmetLevel3 -= DECO_SLOT_COMBINATION_LIST[i - 1].slot3;
-          console.log("can I finish")
           if (this.canFinish()) {
             this.combinations.push(this.currentCombination.slice());
+            this.calculateFoundSet();
             alert(this.currentCombination);
           }
-          console.log("recur next part")
-          if (this.combinations.length < 10) {
+          if (this.foundSet < this.TARGET_SET) {
             this.recursiveSearch(next);
           }
           this.unmetLevel1 += DECO_SLOT_COMBINATION_LIST[i - 1].slot1;
@@ -273,9 +283,7 @@ export class SearchResultComponent implements OnInit {
           this.unmetLevel3 += DECO_SLOT_COMBINATION_LIST[i - 1].slot3;
         }
       }
-      console.log("done one")
     }
-    console.log("done")
   }
 
   canFinish(): boolean {
