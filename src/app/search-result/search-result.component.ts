@@ -141,7 +141,11 @@ export class SearchResultComponent implements OnInit {
   recursiveSearch(depth: number): void {
     switch (depth) {
       case 0:
-        this.recursiveSearchArmor(this.head, 1);
+        if (this.canFinish()) {
+          this.calculateFoundSet();
+        } else {
+          this.recursiveSearchArmor(this.head, 1);
+        }
         break;
       case 1:
         this.recursiveSearchArmor(this.chest, 2);
