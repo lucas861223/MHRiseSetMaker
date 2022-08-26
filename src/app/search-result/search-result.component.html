@@ -1,4 +1,18 @@
-<p>search-result works!</p>
-<button mat-mini-fab color="accent" (click)="search()">
-    <mat-icon>add</mat-icon>
-</button>
+<ul class="outerlayer">
+    <h2>Result</h2>
+    <button mat-mini-fab color="accent" (click)="search()">
+        <mat-icon>add</mat-icon>
+    </button>
+    <div class="innerlayer">
+        <div class="grid">
+            <ng-container *ngFor="let combination of combinations">
+                <label>{{combination[0]}}</label>
+                <label>{{combination[1]}}</label>
+                <label>{{combination[2]}}</label>
+                <label>{{combination[3]}}</label>
+                <label>{{combination[4]}}</label>
+                <label>{{combination[5]}}</label>
+            </ng-container>
+        </div>
+    </div>
+</ul>

@@ -10,7 +10,6 @@ export class Talisman {
     DecoSlotID: number;
     label: string = "";
     identifier: number;
-    grade: number[];
 
     constructor(DecoSlotID: number, skill1ID?: number, skill1Level?: number, skill2ID?: number, skill2Level?: number) {
         if (typeof skill1ID !== 'undefined') {
@@ -35,7 +34,6 @@ export class Talisman {
         }
         this.DecoSlotID = DecoSlotID;
         this.identifier = 0;
-        this.grade = DECO_SLOT_COMBINATION_LIST[DecoSlotID].slots.slice();
         this.makeNewName();
     }
 
@@ -60,7 +58,7 @@ export class Talisman {
                 this.identifier += (this.skill2ID * 10 + this.skill2Level) * 10;
             }
         }
-        this.label += DECO_SLOT_COMBINATION_LIST[this.DecoSlotID - 1].label;
+        this.label += DECO_SLOT_COMBINATION_LIST[this.DecoSlotID].label;
         this.identifier = this.identifier * 10 + this.DecoSlotID;
     }
 

@@ -1,0 +1,22 @@
+.grid {
+    display: grid;
+    row-gap: 50px;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+}
+
+.innerlayer {
+    background-color: lightgray;
+    padding-left: 2%;
+    padding-right: 1%;
+    padding-top: 1%;
+    padding-bottom: 1%;
+    flex-wrap: wrap;
+    gap: 20px 0px;
+    align-items: center;
+  }
+
+
+.outerlayer {
+    margin-right: 10%;
+    padding-bottom: 20px;
+}
