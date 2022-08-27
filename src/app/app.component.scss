@@ -2,7 +2,15 @@
   flex: 1 1 auto;
 }
 
+.imageContainer {
+  max-height: 64px;
+}
+
 button {
   margin-right: 10%;
   margin-top: 2em;
+}
+
+img {
+  max-height: 64px;
 }

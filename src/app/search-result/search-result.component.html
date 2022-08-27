@@ -1,18 +1,31 @@
 <ul class="outerlayer">
     <h2>Result</h2>
-    <button color="accent" (click)="search()">
+    <button mat-raised-button color="accent" (click)="search()">
         Find Set
     </button>
     <div class="innerlayer">
-        <div class="grid">
-            <ng-container *ngFor="let combination of combinations">
-                <label>{{combination[0]}}</label>
-                <label>{{combination[1]}}</label>
-                <label>{{combination[2]}}</label>
-                <label>{{combination[3]}}</label>
-                <label>{{combination[4]}}</label>
-                <label>{{combination[5]}}</label>
-            </ng-container>
-        </div>
+        <mat-expansion-panel hideToggle class="item" disabled>
+            <mat-expansion-panel-header>
+                <mat-grid-list cols="6" rowHeight="20px">
+                    <mat-grid-tile *ngFor="let header of headers" [colspan]="1" [rowspan]="1">
+                        <mat-label style="color:white;">{{header}}</mat-label>
+                    </mat-grid-tile>
+                </mat-grid-list>
+            </mat-expansion-panel-header>
+        </mat-expansion-panel>
+
+        <ng-container *ngFor="let combination of combinations; let i = index">
+            <mat-expansion-panel class="item">
+                <mat-expansion-panel-header>
+                    <mat-grid-list cols="6" rowHeight="20px">
+                        <mat-grid-tile *ngFor="let piece of combination" [colspan]="1" [rowspan]="1">
+                            <mat-label>{{piece}}</mat-label>
+                        </mat-grid-tile>
+                    </mat-grid-list>
+                </mat-expansion-panel-header>
+                <mat-label>{{getInformation(i)}}</mat-label>
+            </mat-expansion-panel>
+        </ng-container>
     </div>
+
 </ul>

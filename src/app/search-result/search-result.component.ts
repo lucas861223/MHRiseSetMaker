@@ -43,6 +43,7 @@ export class SearchResultComponent implements OnInit {
   talismanList = new Map<number, Talisman>();
   relevantSkills = new Map<number, number>();
   sortedArmors: Array<Map<number, Array<number>>> = [];
+  headers: Array<string> = ["Head", "Chest", "Arms", "Waist", "Legs", "Talisman"];
   unmetLevel1 = 0;
   unmetLevel2 = 0;
   unmetLevel3 = 0;
@@ -136,6 +137,22 @@ export class SearchResultComponent implements OnInit {
     console.log("head\t" + this.head.join("\t") + "\nchest\t" + this.chest.join("\t") + "\narms\t" + this.arms.join("\t") + "\nwaist\t" + this.waist.join("\t") + "\nlegs\t" + this.legs.join("\t") + "\ntalisman\t" + this.talisman.join("\t"));
     console.log(this.relevantSkills);
     this.recursiveSearch(0);
+    // for (let key of this.relevantSkills.keys()) {
+    //   if (key > 0) {
+    //     this.addToUnmetLevels(key, this.relevantSkills.get(key)!);
+    //     this.relevantSkills.set(-key, this.relevantSkills.get(key)!);
+    //   }
+    // }
+    console.log("done");
+    if (this.foundSet == 0) {
+      this.combinations.push(["No Matching Set"])
+    }
+  }
+
+  getInformation(index: number): string {
+    let combination = this.combinations[index];
+
+    return "set info goes here";
   }
 
   recursiveSearch(depth: number): void {

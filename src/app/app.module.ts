@@ -20,6 +20,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { SearchResultComponent } from './search-result/search-result.component';
 import { TalismanSharingService } from './TalismanSharingService';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatGridListModule } from '@angular/material/grid-list';
 
 @NgModule({
   declarations: [
@@ -43,7 +45,9 @@ import { TalismanSharingService } from './TalismanSharingService';
     MatChipsModule,
     MatIconModule,
     MatButtonModule,
-    MatDividerModule
+    MatDividerModule,
+    MatExpansionModule,
+    MatGridListModule
   ],
   providers: [SkillSetSharingService, TalismanSharingService],
   bootstrap: [AppComponent]

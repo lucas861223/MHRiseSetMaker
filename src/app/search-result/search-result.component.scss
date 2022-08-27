@@ -1,7 +1,15 @@
 .grid {
     display: grid;
-    row-gap: 50px;
+    row-gap: 10px;
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+}
+
+.item {
+    margin-top: 10px;
+}
+
+mat-grid-list {
+    width: 100%;
 }
 
 .innerlayer {
@@ -13,8 +21,7 @@
     flex-wrap: wrap;
     gap: 20px 0px;
     align-items: center;
-  }
-
+}
 
 .outerlayer {
     margin-right: 10%;
