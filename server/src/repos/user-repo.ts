@@ -39,50 +39,10 @@ async function getAll(): Promise<IUser[]> {
   return db.users;
 }
 
-/**
- * Add one user.
- */
-async function add(user: IUser): Promise<void> {
-  const db = await orm.openDb();
-  user.id = getRandomInt();
-  db.users.push(user);
-  return orm.saveDb(db);
-}
-
-/**
- * Update a user.
- */
-async function update(user: IUser): Promise<void> {
-  const db = await orm.openDb();
-  for (let i = 0; i < db.users.length; i++) {
-    if (db.users[i].id === user.id) {
-      db.users[i] = user;
-      return orm.saveDb(db);
-    }
-  }
-}
-
-/**
- * Delete one user.
- */
-async function _delete(id: number): Promise<void> {
-  const db = await orm.openDb();
-  for (let i = 0; i < db.users.length; i++) {
-    if (db.users[i].id === id) {
-      db.users.splice(i, 1);
-      return orm.saveDb(db);
-    }
-  }
-}
-
-
 // **** Export default **** //
 
 export default {
   getOne,
   persists,
   getAll,
-  add,
-  update,
-  delete: _delete,
 } as const;
