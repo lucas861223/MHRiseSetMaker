@@ -1,12 +1,12 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { SKILL_LIST } from '../SkillList'
-import { Skill } from '../Skill';
-import { DECO_SLOT_COMBINATION_LIST } from '../DecoSlotCombinationList';
-import { SkillSetSharingService } from '../SkillSetSharingService';
-import { Talisman } from '../Talisman';
-import { ARMOR_LIST } from '../ArmorList';
+import { Skill } from '../models/Skill';
+import { SkillSetSharingService } from '../services/SkillSetSharingService';
+import { Talisman } from '../models/Talisman';
 import { Subject } from 'rxjs';
-import { TalismanSharingService } from '../TalismanSharingService';
+import { TalismanSharingService } from '../services/TalismanSharingService';
+import { HttpClient } from '@angular/common/http';
+import { dataService, SKILL_LIST, DECO_SLOT_COMBINATION_LIST } from '../common/DataList';
+import { DecoSlotCombination } from '../models/DecoSlotCombination';
 
 
 @Component({
@@ -17,8 +17,8 @@ import { TalismanSharingService } from '../TalismanSharingService';
 })
 export class TalismanComponent implements OnInit {
 
-  skillList = SKILL_LIST;
-  decoSlotCombination = DECO_SLOT_COMBINATION_LIST;
+  skillList: Skill[] = [];
+  decoSlotCombination: DecoSlotCombination[] = [];
   talismanText = "";
   newSlots = 1;
   relevantSkillLevel = 0;
@@ -31,10 +31,11 @@ export class TalismanComponent implements OnInit {
   talismanList = new Map<number, Talisman>();
   relevantTalisman = new Map<number, Talisman>();
   otherTalisman = new Map<number, Talisman>();
-  subject: Subject<[number, Talisman | null]>; 
+  subject: Subject<[number, Talisman | null]>;
 
   constructor(sharingService: SkillSetSharingService,
-              talismanService: TalismanSharingService) {
+    talismanService: TalismanSharingService,
+    private http: HttpClient) {
     sharingService.getObservable().subscribe(value => {
       if (value[1] > 0) {
         this.relevantSkills.set(value[0], SKILL_LIST[value[0] - 1])
@@ -47,6 +48,15 @@ export class TalismanComponent implements OnInit {
       this.reOrganizeTalismanList();
     })
     this.subject = talismanService.getObservable();
+  }
+
+
+  static updateSkillList(instance: TalismanComponent) {
+    instance.skillList = [...SKILL_LIST];
+  }
+
+  static updateDecoList(instance: TalismanComponent) {
+    instance.decoSlotCombination = [...DECO_SLOT_COMBINATION_LIST];
   }
 
   removeFromRelevant(key: number) {
@@ -120,6 +130,7 @@ export class TalismanComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    dataService.loadData(this.http, TalismanComponent.updateSkillList, TalismanComponent.updateDecoList, this);
   }
 
   reOrganizeTalismanList() {

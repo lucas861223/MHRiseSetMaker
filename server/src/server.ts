@@ -7,6 +7,7 @@ import StatusCodes from 'http-status-codes';
 import 'express-async-errors';
 
 import apiRouter from './routes/api';
+import path from 'path';
 import logger from 'jet-logger';
 import { CustomError } from '@shared/errors';
 
@@ -48,9 +49,14 @@ app.use((err: Error | CustomError, _: Request, res: Response, __: NextFunction) 
   });
 });
 
+// Set views dir
+const _app_folder = path.join(path.resolve(__dirname, "../../"), "ui/dist/mhrise-set-maker/")
+
+app.get('*.*', express.static(_app_folder, {maxAge: '1y'}));
+
 // Serve index.html file
-app.get('*', (_: Request, res: Response) => {
-  res.sendFile('../ui/index.html');
+app.all('*', (_: Request, res: Response) => {
+  res.status(200).sendFile(`/`, {root: _app_folder});
 });
 
 

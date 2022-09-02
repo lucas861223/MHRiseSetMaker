@@ -1,4 +1,4 @@
-import { Armor } from "./Armor"
+import { Armor } from "../models/Armor"
 
 //0: head, 1: chest, 2: glove, 3: waist, 4: legs
 export const ARMOR_LIST: Armor[][] = [

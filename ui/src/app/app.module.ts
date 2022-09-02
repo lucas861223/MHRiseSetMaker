@@ -1,11 +1,11 @@
-import { NgModule } from '@angular/core';
+import { Injector, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { SkillsComponent } from './skills/skills.component';
-import { SkillSetSharingService } from './SkillSetSharingService';
+import { SkillSetSharingService } from './services/SkillSetSharingService';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatSelectModule } from '@angular/material/select';
@@ -19,9 +19,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { SearchResultComponent } from './search-result/search-result.component';
-import { TalismanSharingService } from './TalismanSharingService';
+import { TalismanSharingService } from './services/TalismanSharingService';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { HttpClientModule } from '@angular/common/http';
 import { MatGridListModule } from '@angular/material/grid-list';
+
+export let AppInjector: Injector;
 
 @NgModule({
   declarations: [
@@ -31,6 +34,7 @@ import { MatGridListModule } from '@angular/material/grid-list';
     SearchResultComponent
   ],
   imports: [
+    HttpClientModule,
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,

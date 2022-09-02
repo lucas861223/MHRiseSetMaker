@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { SKILL_LIST } from '../SkillList'
-import { SkillSetSharingService } from '../SkillSetSharingService';
+import { SKILL_LIST } from '../common/DataList'
+import { SkillSetSharingService } from '../services/SkillSetSharingService';
 import { MatSelectChange } from '@angular/material/select';
 import { Subject } from 'rxjs';
 import { Output, EventEmitter } from '@angular/core';
-import { Skill } from '../Skill';
+import { Skill } from '../models/Skill';
 
 @Component({
   selector: 'app-skills',
@@ -12,10 +12,9 @@ import { Skill } from '../Skill';
   styleUrls: ['./skills.component.scss']
 })
 
-
 export class SkillsComponent implements OnInit {
 
-  skillList = SKILL_LIST;
+  skillList: Skill[] = SKILL_LIST;
   regularDistribution = 100 / 5;
   @Output() selectedSkillList = new EventEmitter<string>();
   selectedSkills = new Map<number, number>();
@@ -45,6 +44,4 @@ export class SkillsComponent implements OnInit {
     return [...Array(count).keys()].map((key) => key + start_with)
   };
 }
-
-
 

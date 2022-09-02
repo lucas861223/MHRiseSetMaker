@@ -1,6 +1,4 @@
-import { SKILL_LIST } from "./SkillList";
-import { Subject } from 'rxjs';
-import { DECO_SLOT_COMBINATION_LIST } from "./DecoSlotCombinationList";
+import { SKILL_LIST, DECO_SLOT_COMBINATION_LIST } from "../common/DataList";
 
 export class Talisman {
     skill1ID: number = 0;
