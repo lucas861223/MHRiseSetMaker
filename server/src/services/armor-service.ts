@@ -6,7 +6,7 @@ import { IArmor } from '@models/iArmors';
 /**
  * Get all users
  */
-function getAll(): Promise<IArmor[]> {
+function getAll(): Promise<IArmor[][]> {
     return armorrepo.getAll();
 }
 

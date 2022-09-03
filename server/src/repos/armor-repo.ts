@@ -20,7 +20,7 @@ async function get(id: number): Promise<IArmor | null> {
 /**
  * Get all users.
  */
-async function getAll(): Promise<IArmor[]> {
+async function getAll(): Promise<IArmor[][]> {
     const db = await orm.openDb();
     return db.armor;
 }
