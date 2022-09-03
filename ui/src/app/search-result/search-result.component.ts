@@ -1,7 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { ARMOR_LIST } from '../common/ArmorList';
-import { Armor } from '../models/Armor';
-import { SKILL_LIST, DECO_SLOT_COMBINATION_LIST } from '../common/DataList';
 import { SkillSetSharingService } from '../services/SkillSetSharingService';
 import { TalismanSharingService } from '../services/TalismanSharingService';
 import { Talisman } from '../models/Talisman';

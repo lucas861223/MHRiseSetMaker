@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { SKILL_LIST } from '../common/DataList'
 import { SkillSetSharingService } from '../services/SkillSetSharingService';
-import { MatSelectChange } from '@angular/material/select';
 import { Subject } from 'rxjs';
 import { Output, EventEmitter } from '@angular/core';
 import { Skill } from '../models/Skill';
