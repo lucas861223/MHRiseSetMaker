@@ -7,6 +7,6 @@ export class DecoSlotCombination {
 
     constructor(init: Partial<DecoSlotCombination>) {
         Object.assign(this, init);
-        this.label = this.slot1 + "-" + this.slot2 + this.slot3;
+        this.label = this.slot1 + "-" + this.slot2 + "-" +  this.slot3;
     }
 }

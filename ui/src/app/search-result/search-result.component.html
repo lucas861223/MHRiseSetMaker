@@ -18,7 +18,7 @@
             <mat-expansion-panel class="item">
                 <mat-expansion-panel-header>
                     <mat-grid-list cols="6" rowHeight="20px">
-                        <mat-grid-tile *ngFor="let piece of combination" [colspan]="1" [rowspan]="1">
+                        <mat-grid-tile *ngFor="let piece of combination.resolveSet()" [colspan]="1" [rowspan]="1">
                             <mat-label>{{piece}}</mat-label>
                         </mat-grid-tile>
                     </mat-grid-list>

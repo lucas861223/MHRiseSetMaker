@@ -10,7 +10,7 @@ export interface IArmorSet {
     talisman?: ITalisman;
 }
 
-export class ArmorSet {
+export class ArmorSet implements IArmorSet {
     head?: IArmor;
     chest?: IArmor;
     waist?: IArmor;
@@ -45,10 +45,10 @@ export class ArmorSet {
                 this.head = armor;
                 break;
             case 2:
-                this.arms = armor;
+                this.chest = armor;
                 break;
             case 3:
-                this.chest = armor;
+                this.arms = armor;
                 break;
             case 4:
                 this.waist = armor;
@@ -65,10 +65,10 @@ export class ArmorSet {
                 this.head = undefined;
                 break;
             case 2:
-                this.arms = undefined;
+                this.chest = undefined;
                 break;
             case 3:
-                this.chest = undefined;
+                this.arms = undefined;
                 break;
             case 4:
                 this.waist = undefined;

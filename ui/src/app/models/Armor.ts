@@ -1,5 +1,3 @@
-import { DECO_SLOT_COMBINATION_LIST } from "../common/DataList";
-
 export class Armor {
     id: number;
     name: string;

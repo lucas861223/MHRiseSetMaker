@@ -3,7 +3,7 @@ import armorService from '@services/armor-service'
 import { IDecoSlot } from '@models/iDecoSlots';
 import decoslotService from '@services/decoslot-service'
 import { ISkill } from '@models/iSkills'
-import { ArmorSet, IArmorSet } from '@models/iSets';
+import { ArmorSet, IArmorSet } from '@models/iArmorSets';
 import { ITalisman, Talisman } from '@models/iTalismans'
 import skillService from './skill-service';
 //import skillService from '@services/armor-service'
@@ -11,7 +11,7 @@ import skillService from './skill-service';
 // **** Functions **** //
 
 class searchingAlgorithm {
-    armor: IArmor[][] = [];
+    armor: Armor[][] = [];
     decoSlots: IDecoSlot[] = [];
     head: Array<Array<IArmor>> = [];
     chest: Array<Array<IArmor>> = [];
@@ -26,14 +26,17 @@ class searchingAlgorithm {
     unmetLevel1 = 0;
     unmetLevel2 = 0;
     unmetLevel3 = 0;
+    count = 0;
     foundSet: number = 0;
     decos: number[] = [0, 0, 0];
     combinations: IArmorSet[] = [];
     TARGET_SET = 10;
     skills: ISkill[] = [];
     currentCombination = new ArmorSet();
-
     async findSet(skills: string[], talismans: ITalisman[], target: number): Promise<IArmorSet[]> {
+        if (target == undefined || target == 0) {
+            return this.combinations;
+        }
         this.armor = await armorService.getAll();
         this.decoSlots = await decoslotService.getAll();
         this.skills = await skillService.getAll();
@@ -171,7 +174,6 @@ class searchingAlgorithm {
         //     resolvedCombination[5] = "any talisman with " + DECO_SLOT_COMBINATION_LIST[-this.currentCombination[5]].label + " slots";
         // }
         this.combinations.push(this.currentCombination.copy());
-        //console.log(this.combinations);
         this.foundSet += actualCombinationCount;
     }
 
@@ -196,7 +198,7 @@ class searchingAlgorithm {
         if (this.foundSet < this.TARGET_SET) {
             for (let key of this.sortedArmors[next - 1].keys()) {
                 let armor = new Armor(key);
-                this.currentCombination.addArmor(armor, next);
+                this.addArmor(armor, next);
                 if (this.canFinish()) {
                     //this.printCombo();
                     this.calculateFoundSet();
@@ -253,6 +255,7 @@ class searchingAlgorithm {
     }
 
     canFinish(): boolean {
+        this.count ++;
         let carryover = 0;
         if (this.unmetLevel3 > this.decos[0]) {
             return false;
@@ -338,11 +341,11 @@ class searchingAlgorithm {
 async function findSet(skills: string, talismans: string, target: string): Promise<IArmorSet[]> {
     let search = new searchingAlgorithm();
     let talismanList: Talisman[] = [];
-    let talismanStringLits = talismans.split(",");
+    let talismanStringLits = talismans == undefined ? [] : talismans.split(",");
     for (let i = 0; i < talismanStringLits.length; i++) {
         talismanList.push(Talisman.formTalisman(i + 1, talismanStringLits[i]));
     }
-    return search.findSet(skills.split(","), talismanList, parseInt(target));
+    return search.findSet(skills == undefined ? [] : skills.split(","), talismanList, parseInt(target));
 }
 
 export default {
