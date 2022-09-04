@@ -1,10 +1,12 @@
 <ul class="outerlayer">
     <h2>Result</h2>
-    <button mat-raised-button color="accent" (click)="search()">
+    <button matRipple matRippleColor="white" mat-raised-button color="accent" (click)="search()">
         Find Set
     </button>
-    <div class="innerlayer">
-        <mat-expansion-panel hideToggle class="item" disabled>
+    <div *ngIf="pressed" class="innerlayer">
+        <mat-progress-spinner *ngIf="searching" mode="indeterminate" style="margin:0 auto;">
+        </mat-progress-spinner>
+        <mat-expansion-panel *ngIf="!searching" hideToggle class="item" disabled>
             <mat-expansion-panel-header>
                 <mat-grid-list cols="6" rowHeight="20px">
                     <mat-grid-tile *ngFor="let header of headers" [colspan]="1" [rowspan]="1">
@@ -13,19 +15,20 @@
                 </mat-grid-list>
             </mat-expansion-panel-header>
         </mat-expansion-panel>
-
-        <ng-container *ngFor="let combination of combinations; let i = index">
-            <mat-expansion-panel class="item">
-                <mat-expansion-panel-header>
-                    <mat-grid-list cols="6" rowHeight="20px">
-                        <mat-grid-tile *ngFor="let piece of combination.resolveSet()" [colspan]="1" [rowspan]="1">
-                            <mat-label>{{piece}}</mat-label>
-                        </mat-grid-tile>
-                    </mat-grid-list>
-                </mat-expansion-panel-header>
-                <!-- <mat-label>{{getInformation(i)}}</mat-label> -->
-            </mat-expansion-panel>
-        </ng-container>
+        <div *ngIf="!searching">
+            <ng-container *ngFor="let combination of combinationsString; let i = index">
+                <mat-expansion-panel class="item">
+                    <mat-expansion-panel-header>
+                        <mat-grid-list cols="6" rowHeight="20px">
+                            <mat-grid-tile *ngFor="let piece of combination" [colspan]="1" [rowspan]="1">
+                                <mat-label>{{piece}}</mat-label>
+                            </mat-grid-tile>
+                        </mat-grid-list>
+                    </mat-expansion-panel-header>
+                    <!-- <mat-label>{{getInformation(i)}}</mat-label> -->
+                </mat-expansion-panel>
+            </ng-container>
+        </div>
     </div>
 
 </ul>
