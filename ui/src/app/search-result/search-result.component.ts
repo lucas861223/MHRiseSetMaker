@@ -4,7 +4,8 @@ import { TalismanSharingService } from '../services/TalismanSharingService';
 import { Talisman } from '../models/Talisman';
 import { ArmorSet } from '../models/ArmorSet';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { SKILL_LIST } from '../common/DataList';
+import { DECO_SLOT_COMBINATION_LIST, SKILL_LIST } from '../common/DataList';
+import { Armor } from '../models/Armor';
 
 @Component({
   selector: 'app-search-result',
@@ -13,7 +14,10 @@ import { SKILL_LIST } from '../common/DataList';
 })
 export class SearchResultComponent implements OnInit {
   combinations?: ArmorSet[];
+  combinationsString: string[][] = [];
   headers: string[];
+  pressed: boolean = false;
+  searching: boolean = false;
   constructor(sharingService: SkillSetSharingService,
     talismanService: TalismanSharingService,
     private http: HttpClient) {
@@ -41,27 +45,14 @@ export class SearchResultComponent implements OnInit {
   }
 
   search(): void {
-
-    // console.log("head\t" + this.head.join("\t") + "\nchest\t" + this.chest.join("\t") + "\narms\t" + this.arms.join("\t") + "\nwaist\t" + this.waist.join("\t") + "\nlegs\t" + this.legs.join("\t") + "\ntalisman\t" + this.talisman.join("\t"));
-    // console.log(this.relevantSkills);
-
-    // // for (let key of this.relevantSkills.keys()) {
-    // //   if (key > 0) {
-    // //     this.addToUnmetLevels(key, this.relevantSkills.get(key)!);
-    // //     this.relevantSkills.set(-key, this.relevantSkills.get(key)!);
-    // //   }
-    // // }
-    // console.log("done");
-    // if (this.foundSet == 0) {
-    //   this.combinations.push(["No Matching Set"])
-    // }
+    this.searching = true;
+    this.pressed = true;
     let queryParams = new HttpParams();
     let querystring = "";
     for (let key of this.relevantSkills.keys()) {
       querystring += key + "," + this.relevantSkills.get(key) + ",";
     }
     queryParams = queryParams.set("skills",  querystring.substring(0, querystring.length - 1));
-    console.log(querystring);
     querystring = "";
     for (let key of this.talismanList.keys()) {
       if (this.talismanList.get(key)!.skill1ID > 0) {
@@ -75,10 +66,38 @@ export class SearchResultComponent implements OnInit {
 
     queryParams = queryParams.set("talismans", querystring.substring(0, querystring.length - 1));
     queryParams = queryParams.set("target", "10");
-    console.log(queryParams.keys());
-    console.log(queryParams.getAll('skills'));
-    this.http.get('/api/sets/find-set', { params: queryParams }).subscribe((data: any) => {
-      console.log(data);
+    this.combinationsString = [];
+    this.http.get('/api/sets/find-set', { params: queryParams }).subscribe((sets: any) => {
+      for (let set of sets) {
+        let names: string[] = [];
+        names.push(this.resolveName(set.head));
+        names.push(this.resolveName(set.chest));
+        names.push(this.resolveName(set.arms));
+        names.push(this.resolveName(set.waist));
+        names.push(this.resolveName(set.leg));
+        if (set.talisman == undefined) {
+          names.push("any");
+        } else if (set.talisman.identifier > 0) {
+          names.push(this.talismanList.get(set.talisman.identifier)!.label);
+        } else {
+          names.push("Any armor with " + DECO_SLOT_COMBINATION_LIST[set.talisman.decoSlots].label + " slots");
+        }
+        this.combinationsString!.push(names);
+      }
+      if (this.combinationsString.length == 0) {
+        this.combinationsString.push(["No Matching Set."]);
+      }
+      this.searching = false;
     });
+  }
+
+  resolveName(armor?: Armor): string {
+    if (armor == undefined) {
+      return "Any";
+    } else if (armor.id > 0) {
+      return armor.name;
+    } else {
+      return "Any armor with " + DECO_SLOT_COMBINATION_LIST[armor.decoSlots].label + " slots";
+    }
   }
 }

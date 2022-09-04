@@ -334,10 +334,6 @@ class searchingAlgorithm {
     }
 }
 
-
-
-
-
 async function findSet(skills: string, talismans: string, target: string): Promise<IArmorSet[]> {
     let search = new searchingAlgorithm();
     let talismanList: Talisman[] = [];

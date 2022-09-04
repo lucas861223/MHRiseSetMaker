@@ -22,8 +22,7 @@ export const p = {
  * Get all users
  */
 router.get(p.get, async (req: Request, res: Response) => {
-    const sets = setService.findSet(req.query.skills as string, req.query.talismans as string, req.query.target as string);
-    return res.status(OK).json({ sets });
+    setService.findSet(req.query.skills as string, req.query.talismans as string, req.query.target as string).then(data => {return res.status(OK).json(data);});
 });
 
 
