@@ -2,12 +2,15 @@
     "name": "mhr-set-maker",
     "version": "0.0.0",
     "browser": {
-      "fs": false,
-      "child_process": false
+        "fs": false,
+        "child_process": false
     },
     "scripts": {
-      "gcp-build": "cd ui && ng build && cd ../server && npm run build && cd ..",
-      "start": "cd ./server/ && npm run start",
-      "postinstall": "cd ui && npm install && cd ../server && npm install"
+        "gcp-build": "cd ui && ng build && cd ../server && npm run build && cd ..",
+        "start": "cd ./server/ && npm run start",
+        "postinstall": "cd ui && npm install && cd ../server && npm install"
+    },
+    "dependencies": {
+        "@angular/cli": "^14.2.1"
     }
 }
